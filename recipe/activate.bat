@@ -162,7 +162,7 @@ IF NOT "@{target_platform}" == "@{host_platform}" (
   :: CL_DIR2 will have spaces in it, but some build tools like don't really like
   :: CC_FOR_BUILD etc having spaces in it
   :: Here we map CL_DIR2 to Z:
-  subst Z: "$CL_DIR2"
+  subst Z: "!CL_DIR2!"
   set CL_DIR1=
   set CL_DIR2=
   set CL_EXE=
