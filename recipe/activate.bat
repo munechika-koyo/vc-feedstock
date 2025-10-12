@@ -98,6 +98,7 @@ IF NOT "@{target_platform}" == "@{host_platform}" (
   set "CMAKE_ARGS=%CMAKE_ARGS% -DCMAKE_SYSTEM_NAME=Windows -DCMAKE_SYSTEM_PROCESSOR=@{target_processor}"
 
   set CL_EXE=
+  :: Get the first value from where cl.exe
   FOR /F "delims=" %%i IN ('where cl.exe') DO  if not defined CL_EXE set CL_EXE=%%i
   call :GetDirName CL_EXE CL_DIR1
   call :GetDirName CL_DIR1 CL_DIR2
