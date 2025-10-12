@@ -110,13 +110,13 @@ IF NOT "@{target_platform}" == "@{host_platform}" (
   set CL_DIR2=
   set CL_EXE=
 
-  set "CC_FOR_BUILD=Z:/@{build_msbuild_plat}/cl.exe"
-  set "CXX_FOR_BUILD=Z:/@{build_msbuild_plat}/cl.exe"
+  set "CC_FOR_BUILD=Z:/@{host_msbuild_plat}/cl.exe"
+  set "CXX_FOR_BUILD=Z:/@{host_msbuild_plat}/cl.exe"
   call :ReplaceInTargetVariable LIB LIB_FOR_BUILD
   call :ReplaceInTargetVariable INCLUDE INCLUDE_FOR_BUILD
   set "LIB_FOR_BUILD=%CONDA_PREFIX%/Library/lib;!LIB_FOR_BUILD!"
   set "INCLUDE_FOR_BUILD=%CONDA_PREFIX%/Library/include;!INCLUDE_FOR_BUILD!"
-  set "LDFLAGS_FOR_BUILD=%LDFLAGS% /MACHINE:@{build_msbuild_plat}"
+  set "LDFLAGS_FOR_BUILD=%LDFLAGS% /MACHINE:@{host_msbuild_plat}"
 ) else (
   set "CONDA_BUILD_CROSS_COMPILATION=0"
 )
