@@ -84,7 +84,7 @@ if errorlevel 1 (
     echo Windows SDK version found as: "%WindowsSDKVer%"
 )
 
-set "CMAKE_PLAT=@{cmake_plat}"
+set "CMAKE_PLAT=@{target_msbuild_plat}"
 set "VCVARSBAT=@{vcvarsbat}"
 
 set "CMAKE_ARGS=-DCMAKE_BUILD_TYPE=Release"
@@ -96,6 +96,23 @@ IF "%CONDA_BUILD%" == "1" (
 IF NOT "@{target_platform}" == "@{host_platform}" (
   set "CONDA_BUILD_CROSS_COMPILATION=1"
   set "CMAKE_ARGS=%CMAKE_ARGS% -DCMAKE_SYSTEM_NAME=Windows -DCMAKE_SYSTEM_PROCESSOR=@{target_processor}"
+
+  set CL_EXE=
+  FOR /F "delims=" %%i IN ('where cl.exe') DO  if not defined CL_EXE set CL_EXE=%%i
+  call :GetDirName CL_EXE CL_DIR1
+  call :GetDirName CL_DIR1 CL_DIR2
+  subst Z: "$CL_DIR2"
+  set CL_DIR1=
+  set CL_DIR2=
+  set CL_EXE=
+
+  set "CC_FOR_BUILD=Z:/@{build_msbuild_plat}/cl.exe"
+  set "CXX_FOR_BUILD=Z:/@{build_msbuild_plat}/cl.exe"
+  call :ReplaceInTargetVariable LIB LIB_FOR_BUILD
+  call :ReplaceInTargetVariable INCLUDE INCLUDE_FOR_BUILD
+  set "LIB_FOR_BUILD=%CONDA_PREFIX%/Library/lib;!LIB_FOR_BUILD!"
+  set "INCLUDE_FOR_BUILD=%CONDA_PREFIX%/Library/include;!INCLUDE_FOR_BUILD!"
+  set "LDFLAGS_FOR_BUILD=%LDFLAGS% /MACHINE:@{build_msbuild_plat}"
 ) else (
   set "CONDA_BUILD_CROSS_COMPILATION=0"
 )
@@ -165,7 +182,6 @@ if errorlevel 1 call :GetWin10SdkDirHelper HKCU\SOFTWARE > nul 2>&1
 if errorlevel 1 exit /B 1
 exit /B 0
 
-
 :GetWin10SdkDirHelper
 @@REM `Get Windows 10 SDK installed folder`
 for /F "tokens=1,2*" %%i in ('reg query "%1\Microsoft\Microsoft SDKs\Windows\v10.0" /v "InstallationFolder"') DO (
@@ -173,4 +189,19 @@ for /F "tokens=1,2*" %%i in ('reg query "%1\Microsoft\Microsoft SDKs\Windows\v10
         SET WindowsSdkDir=%%~k
     )
 )
+exit /B 0
+
+:GetDirName
+setlocal enableextensions enabledelayedexpansion
+for %%A in ("!%1!") do set "local_dirname=%%~dpA"
+endlocal & set "%2=%local_dirname%"
+exit /B 0
+
+:ReplaceInTargetVariable
+setlocal enabledelayedexpansion
+set "input_var_name=%~1"
+set "output_var_name=%~4"
+set "temp_var=!input_var_name:@{target_msbuild_plat}=@{host_msbuild_plat}!"
+set "temp_var2=!temp_var:@{target_msbuild_plat_lower}=@{host_msbuild_plat_lower}!"
+endlocal & set "%output_var_name%=%temp_var2%"
 exit /B 0

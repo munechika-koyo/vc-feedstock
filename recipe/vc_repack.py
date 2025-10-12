@@ -58,7 +58,7 @@ class AtTemplate(string.Template):
     delimiter = "@"
 
 
-def get_cmake_plat(target_platform):
+def get_msbuild_plat(target_platform):
     if target_platform == "win-32":
         return "Win32"
     elif target_platform == "win-64":
@@ -114,7 +114,10 @@ def subs(line, args):
         "vcvars_ver": args.activate_vcvars_ver,
         "ver_plus_one": str(int(args.activate_major)+1),
         "vcver_nodots": args.activate_vcver.replace(".", ""),
-        "cmake_plat": get_cmake_plat(args.target_platform),
+        "host_msbuild_plat": get_msbuild_plat(args.host_platform),
+        "target_msbuild_plat": get_msbuil_plat(args.target_platform),
+        "host_msbuild_plat_lower": get_msbuild_plat(args.host_platform).lower(),
+        "target_msbuild_plat_lower": get_msbuil_plat(args.target_platform).lower(),
         "vcvarsbat": get_vcvarsbat(args.target_platform, args.host_platform),
     }
     return t.substitute(d)
