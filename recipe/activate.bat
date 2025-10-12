@@ -207,7 +207,7 @@ set "input_var_name=%~1"
 set "output_var_name=%~2"
 :: We replace paths like C:\Program Files (x86)\Windows Kits\10\\lib\10.0.26100.0\\um\ARM64
 :: to contain x64 for use in _FOR_BUILD variables
-set "temp_var=!input_var_name:ARM64=x64!"
-set "temp_var2=!temp_var:arm64=x64!"
+set "temp_var=!input_var_name:@{target_msbuild_plat}=@{host_msbuild_plat}!"
+set "temp_var2=!temp_var:@{target_msbuild_plat_lower}=@{host_msbuild_plat_lower}!"
 endlocal & set "%output_var_name%=%temp_var2%"
 exit /B 0
