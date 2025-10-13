@@ -159,7 +159,7 @@ IF NOT "@{target_platform}" == "@{host_platform}" (
     set CL_DIR2=
     set CL_EXE=
     :: Get the first value from where cl.exe
-    FOR /F "delims=" %%i IN ('where cl.exe') DO  if not defined CL_EXE set CL_EXE=%%i
+    FOR /F "delims=" %%i IN ('where cl.exe') DO  if not defined CL_EXE set "CL_EXE=%%i"
     call :GetDirName CL_EXE CL_DIR1
     call :GetDirName CL_DIR1 CL_DIR2
     :: CL_DIR2 will have spaces in it, but some build tools like don't really like
