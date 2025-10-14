@@ -18,7 +18,7 @@
 {% set vcvars_ver_maj = cl_version.split(".")[0]|int - 5 %}
 {% set vcvars_ver_min = cl_version.split(".")[1]|int %}
 {% set vcvars_ver = vcvars_ver_maj ~ "." ~ vcvars_ver_min %}
-{% set build_num = 31 %}
+{% set build_num = 32 %}
 
 package:
   name: vs{{ vsyear }}
@@ -298,6 +298,8 @@ outputs:
         - echo "%CMAKE_GENERATOR%"
         - echo "%CMAKE_GENERATOR_PLATFORM%"
         - echo "%CMAKE_GENERATOR_TOOLSET%"
+        - echo "CC=%CC%"
+        - echo "CC_FOR_BUILD=%CC_FOR_BUILD%"
     about:
       summary: >-
         Activation and version verification of MSVC {{ vcver }}

@@ -84,20 +84,13 @@ if errorlevel 1 (
     echo Windows SDK version found as: "%WindowsSDKVer%"
 )
 
-set "CMAKE_PLAT=@{cmake_plat}"
+set "CMAKE_PLAT=@{target_msbuild_plat}"
 set "VCVARSBAT=@{vcvarsbat}"
 
 set "CMAKE_ARGS=-DCMAKE_BUILD_TYPE=Release"
 IF "%CONDA_BUILD%" == "1" (
   :: for -DPython_FIND_REGISTRY see https://github.com/conda-forge/conda-smithy/issues/2319
   set "CMAKE_ARGS=%CMAKE_ARGS% -DCMAKE_INSTALL_PREFIX=%LIBRARY_PREFIX% -DPython_FIND_REGISTRY=NEVER -DPython3_FIND_REGISTRY=NEVER -DCMAKE_PROGRAM_PATH=%BUILD_PREFIX%\bin;%BUILD_PREFIX%\Scripts;%BUILD_PREFIX%\Library\bin;%PREFIX%\bin;%PREFIX%\Scripts;%PREFIX%\Library\bin"
-)
-
-IF NOT "@{target_platform}" == "@{host_platform}" (
-  set "CONDA_BUILD_CROSS_COMPILATION=1"
-  set "CMAKE_ARGS=%CMAKE_ARGS% -DCMAKE_SYSTEM_NAME=Windows -DCMAKE_SYSTEM_PROCESSOR=@{target_processor}"
-) else (
-  set "CONDA_BUILD_CROSS_COMPILATION=0"
 )
 
 :: set CMAKE_* variables
@@ -157,6 +150,33 @@ if %ERRORLEVEL% neq 0 (
 )
 popd
 
+IF NOT "@{target_platform}" == "@{host_platform}" (
+  set "CONDA_BUILD_CROSS_COMPILATION=1"
+  set "CMAKE_ARGS=%CMAKE_ARGS% -DCMAKE_SYSTEM_NAME=Windows -DCMAKE_SYSTEM_PROCESSOR=@{target_processor}"
+
+  setlocal enabledelayedexpansion
+    set CL_DIR1=
+    set CL_DIR2=
+    set CL_EXE=
+    :: Get the first value from where cl.exe
+    FOR /F "delims=" %%i IN ('where cl.exe') DO  if not defined CL_EXE set "CL_EXE=%%i"
+    call :GetDirName CL_EXE CL_DIR1
+    call :GetDirName CL_DIR1 CL_DIR2
+    :: CL_DIR2 will have spaces in it, but some build tools like don't really like
+    :: CC_FOR_BUILD etc having spaces in it
+    :: Here we map CL_DIR2 to Z:
+    subst Z: "!CL_DIR2!"
+  endlocal
+
+  set "CC_FOR_BUILD=Z:/@{host_msbuild_plat}/cl.exe"
+  set "CXX_FOR_BUILD=Z:/@{host_msbuild_plat}/cl.exe"
+  call :ReplaceInTargetVariable "%CONDA_PREFIX%/Library/lib;%LIB%" LIB_FOR_BUILD
+  call :ReplaceInTargetVariable "%CONDA_PREFIX%/Library/include;%INCLUDE%" INCLUDE_FOR_BUILD
+  set "LDFLAGS_FOR_BUILD=%LDFLAGS% /MACHINE:@{host_msbuild_plat}"
+) else (
+  set "CONDA_BUILD_CROSS_COMPILATION=0"
+)
+
 :GetWin10SdkDir
 call :GetWin10SdkDirHelper HKLM\SOFTWARE\Wow6432Node > nul 2>&1
 if errorlevel 1 call :GetWin10SdkDirHelper HKCU\SOFTWARE\Wow6432Node > nul 2>&1
@@ -165,7 +185,6 @@ if errorlevel 1 call :GetWin10SdkDirHelper HKCU\SOFTWARE > nul 2>&1
 if errorlevel 1 exit /B 1
 exit /B 0
 
-
 :GetWin10SdkDirHelper
 @@REM `Get Windows 10 SDK installed folder`
 for /F "tokens=1,2*" %%i in ('reg query "%1\Microsoft\Microsoft SDKs\Windows\v10.0" /v "InstallationFolder"') DO (
@@ -173,4 +192,22 @@ for /F "tokens=1,2*" %%i in ('reg query "%1\Microsoft\Microsoft SDKs\Windows\v10
         SET WindowsSdkDir=%%~k
     )
 )
+exit /B 0
+
+:GetDirName
+setlocal enableextensions enabledelayedexpansion
+for %%A in ("!%1!") do set "local_dirname=%%~dpA"
+if "!local_dirname:~-1!"=="\" set "local_dirname2=!local_dirname:~0,-1!"
+endlocal & set "%2=%local_dirname2%"
+exit /B 0
+
+:ReplaceInTargetVariable
+setlocal enabledelayedexpansion
+set "input_var_name=%~1"
+set "output_var_name=%~2"
+:: We replace paths like C:\Program Files (x86)\Windows Kits\10\\lib\10.0.26100.0\\um\ARM64
+:: to contain x64 for use in _FOR_BUILD variables
+set "temp_var=!input_var_name:@{target_msbuild_plat}=@{host_msbuild_plat}!"
+set "temp_var2=!temp_var:@{target_msbuild_plat_lower}=@{host_msbuild_plat_lower}!"
+endlocal & set "%output_var_name%=%temp_var2%"
 exit /B 0
