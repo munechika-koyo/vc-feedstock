@@ -1,4 +1,6 @@
 import argparse
+import copy
+import json
 import os
 import shutil
 import string
@@ -18,6 +20,20 @@ EXE_FILENAMES = {
     "win-arm64": "vc_redist.arm64.exe",
     "win-64": "vc_redist.x64.exe",
     "win-32": "vc_redist.x86.exe",
+}
+
+VCRUNTIME_DSOLIST = {
+  "version":1,
+  "allow": [
+    "C:/Windows/System32/**/*.dll"
+  ],
+  "deny": [
+    "**/ucrtbased.dll",
+    "**/msvcp140d.dll",
+    "**/vcruntime140d.dll",
+    "**/vcomp.dll"
+  ],
+  "subdir": "dummy",
 }
 
 
@@ -413,6 +429,12 @@ def main():
             ) as w:
                 for line in r:
                     w.write(subs(line, args))
+        targetdir = os.path.join(env.prefix, "etc", "conda-build", "dsolists.d")
+        os.makedirs(targetdir)
+        with open(os.path.join(targetdir, f"vcruntime_{args.target_platform}.json"), "w") as f:
+            dsolist = copy.deepcopy(VCRUNTIME_DSOLIST)
+            dsolist["subdir"] = args.target_platform
+            json.dump(dsolist, f)
 
 
 if __name__ == "__main__":
