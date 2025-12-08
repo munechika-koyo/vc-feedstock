@@ -431,6 +431,7 @@ def main():
                     w.write(subs(line, args))
         targetdir = os.path.join(env.prefix, "etc", "conda-build", "dsolists.d")
         os.makedirs(targetdir)
+        # Implement CEP-28
         with open(os.path.join(targetdir, f"vcruntime_{args.target_platform}.json"), "w") as f:
             dsolist = copy.deepcopy(VCRUNTIME_DSOLIST)
             dsolist["subdir"] = args.target_platform
