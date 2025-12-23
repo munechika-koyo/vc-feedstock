@@ -125,20 +125,6 @@ Current build status
                 </a>
               </td>
             </tr><tr>
-              <td>win_64_cl_version19.42.34433cross_target_platformwin-64runtime_version14.42.34433sha2561821577409C35B2B9505AC833E246376CC68A8262972100444010B57226F0940update_version12uuidc7dac50a-e3e8-40f6-_h40087b35</td>
-              <td>
-                <a href="https://dev.azure.com/conda-forge/feedstock-builds/_build/latest?definitionId=3629&branchName=main">
-                  <img src="https://dev.azure.com/conda-forge/feedstock-builds/_apis/build/status/vc-feedstock?branchName=main&jobName=win&configuration=win%20win_64_cl_version19.42.34433cross_target_platformwin-64runtime_version14.42.34433sha2561821577409C35B2B9505AC833E246376CC68A8262972100444010B57226F0940update_version12uuidc7dac50a-e3e8-40f6-_h40087b35" alt="variant">
-                </a>
-              </td>
-            </tr><tr>
-              <td>win_64_cl_version19.42.34433cross_target_platformwin-arm64runtime_version14.42.34433sha256C176B30681576B86068F8B55FAE512391EE4217511494B24393C1C9476BC2169update_version12uuid5319f718-2a84-4a_h9f2bad86</td>
-              <td>
-                <a href="https://dev.azure.com/conda-forge/feedstock-builds/_build/latest?definitionId=3629&branchName=main">
-                  <img src="https://dev.azure.com/conda-forge/feedstock-builds/_apis/build/status/vc-feedstock?branchName=main&jobName=win&configuration=win%20win_64_cl_version19.42.34433cross_target_platformwin-arm64runtime_version14.42.34433sha256C176B30681576B86068F8B55FAE512391EE4217511494B24393C1C9476BC2169update_version12uuid5319f718-2a84-4a_h9f2bad86" alt="variant">
-                </a>
-              </td>
-            </tr><tr>
               <td>win_64_cl_version19.44.35207cross_target_platformwin-64runtime_version14.44.35208sha256D62841375B90782B1829483AC75695CCEF680A8F13E7DE569B992EF33C6CD14Aupdate_version14uuid40b59c73-1480-4caf-_h1f00c6cd</td>
               <td>
                 <a href="https://dev.azure.com/conda-forge/feedstock-builds/_build/latest?definitionId=3629&branchName=main">
@@ -157,20 +143,6 @@ Current build status
               <td>
                 <a href="https://dev.azure.com/conda-forge/feedstock-builds/_build/latest?definitionId=3629&branchName=main">
                   <img src="https://dev.azure.com/conda-forge/feedstock-builds/_apis/build/status/vc-feedstock?branchName=main&jobName=win&configuration=win%20win_arm64_cl_version19.29.30139cross_target_platformwin-64runtime_version14.29.30139sha256296F96CD102250636BCD23AB6E6CF70935337B1BBB3507FE8521D8D9CFAA932Fupdate_version11uuidb929b7fe-5c89-45_hea466f03" alt="variant">
-                </a>
-              </td>
-            </tr><tr>
-              <td>win_arm64_cl_version19.42.34433cross_target_platformwin-64runtime_version14.42.34433sha2561821577409C35B2B9505AC833E246376CC68A8262972100444010B57226F0940update_version12uuidc7dac50a-e3e8-40_h1689e2ec</td>
-              <td>
-                <a href="https://dev.azure.com/conda-forge/feedstock-builds/_build/latest?definitionId=3629&branchName=main">
-                  <img src="https://dev.azure.com/conda-forge/feedstock-builds/_apis/build/status/vc-feedstock?branchName=main&jobName=win&configuration=win%20win_arm64_cl_version19.42.34433cross_target_platformwin-64runtime_version14.42.34433sha2561821577409C35B2B9505AC833E246376CC68A8262972100444010B57226F0940update_version12uuidc7dac50a-e3e8-40_h1689e2ec" alt="variant">
-                </a>
-              </td>
-            </tr><tr>
-              <td>win_arm64_cl_version19.42.34433cross_target_platformwin-arm64runtime_version14.42.34433sha256C176B30681576B86068F8B55FAE512391EE4217511494B24393C1C9476BC2169update_version12uuid5319f718-2a84_h63aee346</td>
-              <td>
-                <a href="https://dev.azure.com/conda-forge/feedstock-builds/_build/latest?definitionId=3629&branchName=main">
-                  <img src="https://dev.azure.com/conda-forge/feedstock-builds/_apis/build/status/vc-feedstock?branchName=main&jobName=win&configuration=win%20win_arm64_cl_version19.42.34433cross_target_platformwin-arm64runtime_version14.42.34433sha256C176B30681576B86068F8B55FAE512391EE4217511494B24393C1C9476BC2169update_version12uuid5319f718-2a84_h63aee346" alt="variant">
                 </a>
               </td>
             </tr><tr>
@@ -279,12 +251,12 @@ it is possible to build and upload installable packages to the
 [conda-forge](https://anaconda.org/conda-forge) [anaconda.org](https://anaconda.org/)
 channel for Linux, Windows and OSX respectively.
 
-To manage the continuous integration and simplify feedstock maintenance
+To manage the continuous integration and simplify feedstock maintenance,
 [conda-smithy](https://github.com/conda-forge/conda-smithy) has been developed.
 Using the ``conda-forge.yml`` within this repository, it is possible to re-render all of
 this feedstock's supporting files (e.g. the CI configuration files) with ``conda smithy rerender``.
 
-For more information please check the [conda-forge documentation](https://conda-forge.org/docs/).
+For more information, please check the [conda-forge documentation](https://conda-forge.org/docs/).
 
 Terminology
 ===========
@@ -311,7 +283,7 @@ merged, the recipe will be re-built and uploaded automatically to the
 everybody to install and use from the `conda-forge` channel.
 Note that all branches in the conda-forge/vc-feedstock are
 immediately built and any created packages are uploaded, so PRs should be based
-on branches in forks and branches in the main repository should only be used to
+on branches in forks, and branches in the main repository should only be used to
 build distinct package versions.
 
 In order to produce a uniquely identifiable distribution:
