@@ -150,6 +150,14 @@ if %ERRORLEVEL% neq 0 (
 )
 popd
 
+:: after calling vcvars, %VSINSTALLDIR% is in front of our own compilers on the path,
+:: which is undesirable e.g. when using clang etc.; move our paths in front again
+IF NOT "%CONDA_BUILD%" == "" (
+  set "PATH=%BUILD_PREFIX%\Library\bin;%PREFIX%\Library\bin;%PATH%"
+) else (
+  set "PATH=%CONDA_PREFIX%\Library\bin;%PATH%"
+)
+
 IF NOT "@{target_platform}" == "@{host_platform}" (
   set "CONDA_BUILD_CROSS_COMPILATION=1"
   set "CMAKE_ARGS=%CMAKE_ARGS% -DCMAKE_SYSTEM_NAME=Windows -DCMAKE_SYSTEM_PROCESSOR=@{target_processor}"

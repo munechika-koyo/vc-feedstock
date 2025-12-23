@@ -18,7 +18,10 @@
 {% set vcvars_ver_maj = cl_version.split(".")[0]|int - 5 %}
 {% set vcvars_ver_min = cl_version.split(".")[1]|int %}
 {% set vcvars_ver = vcvars_ver_maj ~ "." ~ vcvars_ver_min %}
-{% set build_num = 33 %}
+
+{% set clang_test_version = "21.1.7" %}
+
+{% set build_num = 34 %}
 
 package:
   name: vs{{ vsyear }}
@@ -294,12 +297,18 @@ outputs:
       run:
         - vs{{ vsyear }}_{{ cross_target_platform }} {{ cl_version }}
     test:
+      requires:
+        # intentionally unactivated; testing to find our clang before the one from the image
+        - clang {{ clang_test_version }}
       commands:
         - echo "%CMAKE_GENERATOR%"
         - echo "%CMAKE_GENERATOR_PLATFORM%"
         - echo "%CMAKE_GENERATOR_TOOLSET%"
         - echo "CC=%CC%"
         - echo "CC_FOR_BUILD=%CC_FOR_BUILD%"
+        # escape the inner single quotes for yaml processing
+        - 'for /f "tokens=3" %%i in (''clang --version^| findstr /R "[0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*"'') do set "FOUND_CLANG_VERSION=%%i"'  # [win]
+        - 'if not "%FOUND_CLANG_VERSION%"=="{{ clang_test_version }}" exit /b 1'  # [win]
     about:
       summary: >-
         Activation and version verification of MSVC {{ vcver }}
